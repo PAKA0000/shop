@@ -17,7 +17,7 @@ public class CustomerDao extends DBConnection {
         try (Connection conn = getConn();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, c.getCustomerCode());
+            stmt.setInt(1, c.getCustomerCode());
             stmt.setString(2, c.getCustomerId());
             stmt.setString(3, c.getCustomerPw());
             stmt.setString(4, c.getCustomerName());
@@ -47,7 +47,7 @@ public class CustomerDao extends DBConnection {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 c = new Customer();
-                c.setCustomerCode(rs.getString("customer_code"));
+                c.setCustomerCode(rs.getInt("customer_code"));
                 c.setCustomerId(rs.getString("customer_id"));
                 c.setCustomerPw(rs.getString("customer_pw"));
                 c.setCustomerName(rs.getString("customer_name"));
@@ -73,7 +73,7 @@ public class CustomerDao extends DBConnection {
 
             while (rs.next()) {
                 Customer c = new Customer();
-                c.setCustomerCode(rs.getString("customer_code"));
+                c.setCustomerCode(rs.getInt("customer_code"));
                 c.setCustomerId(rs.getString("customer_id"));
                 c.setCustomerPw(rs.getString("customer_pw"));
                 c.setCustomerName(rs.getString("customer_name"));
@@ -103,7 +103,7 @@ public class CustomerDao extends DBConnection {
 
             if (rs.next()) {
                 c = new Customer();
-                c.setCustomerCode(rs.getString("customer_code"));
+                c.setCustomerCode(rs.getInt("customer_code"));
                 c.setCustomerId(rs.getString("customer_id"));
                 c.setCustomerPw(rs.getString("customer_pw"));
                 c.setCustomerName(rs.getString("customer_name"));

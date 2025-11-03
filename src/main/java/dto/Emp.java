@@ -1,16 +1,16 @@
 package dto;
 
 public class Emp {
-	private String empCode;
+	private int empCode;
 	private String empId;
-	private String pw;
+	private String empPw;
 	private String empName;
 	private String active;
 	private String createdate;
-	public String getEmpCode() {
+	public int getEmpCode() {
 		return empCode;
 	}
-	public void setEmpCode(String empCode) {
+	public void setEmpCode(int empCode) {
 		this.empCode = empCode;
 	}
 	public String getEmpId() {
@@ -19,11 +19,11 @@ public class Emp {
 	public void setEmpId(String empId) {
 		this.empId = empId;
 	}
-	public String getPw() {
-		return pw;
+	public String getEmpPw() {
+		return empPw;
 	}
-	public void setPw(String pw) {
-		this.pw = pw;
+	public void setPw(String empPw) {
+		this.empPw = empPw;
 	}
 	public String getEmpName() {
 		return empName;
@@ -45,7 +45,7 @@ public class Emp {
 	}
 	@Override
 	public String toString() {
-		return "Emp [empCode=" + empCode + ", empId=" + empId + ", pw=" + pw + ", empName=" + empName + ", active="
+		return "Emp [empCode=" + empCode + ", empId=" + empId + ", empPw=" + empPw + ", empName=" + empName + ", active="
 				+ active + ", createdate=" + createdate + "]";
 	}
 	

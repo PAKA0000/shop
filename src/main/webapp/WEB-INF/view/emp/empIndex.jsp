@@ -11,7 +11,7 @@
 <body>
 	<h1>empIndex</h1>
 	<div>
-		${loginEmp.EmpName}님 반갑습니다.
+		${loginEmp.empName}님 반갑습니다.
 		<a href="${pageContext.request.contextPath}/emp/empLogout">로그아웃</a>
 	</div>
 </body>

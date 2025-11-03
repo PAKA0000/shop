@@ -10,7 +10,6 @@ import java.io.IOException;
 
 @WebServlet("/customer/customerIndex")
 public class CustomerIndexController extends HttpServlet {
-	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/view/customer/customerIndex.jsp").forward(request, response);
 	}
