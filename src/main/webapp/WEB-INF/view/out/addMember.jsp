@@ -8,5 +8,8 @@
 </head>
 <body>
 	<h1>addMember</h1>
+	<div>
+		<a href="${pageContext.request.contextPath}/out/login}">로그인</a>
+	</div>
 </body>
 </html>

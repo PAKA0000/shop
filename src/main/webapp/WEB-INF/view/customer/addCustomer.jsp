@@ -117,39 +117,46 @@ p a:hover {
 </style>
 <meta charset="UTF-8">
 <script>
-  function validateForm() {
-    // 입력값 가져오기
-    const id = document.getElementById("id").value.trim();
-    const pw = document.getElementById("pw").value.trim();
+function validateForm() {
+  // 입력값 가져오기
+  const id = document.getElementById("id").value.trim();
+  const pw = document.getElementById("pw").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const birth = document.getElementById("birth").value.trim();
 
-    // 아이디 4글자 이상 체크
-    if (id.length < 4) {
-      alert("아이디는 최소 4글자 이상이어야 합니다.");
-      document.getElementById("id").focus();
-      return false; // 제출 막기
-    }
-
-    // 비밀번호 4글자 이상 체크
-    if (pw.length < 4) {
-      alert("비밀번호는 최소 4글자 이상이어야 합니다.");
-      document.getElementById("pw").focus();
-      return false; // 제출 막기
-    }
-    
-    //이메일은 @ 를 포함시킬것 
-    if(email.length)
-
-    // 모두 통과하면 폼 제출
-    return true;
+  // 아이디 4글자 이상 체크
+  if (id.length < 4) {
+    alert("아이디는 최소 4글자 이상이어야 합니다.");
+    document.getElementById("id").focus();
+    return false;
   }
 
-  // 폼 submit 이벤트에 연결
-  	window.onload = function() {
-    const form = document.querySelector("form");
-    form.onsubmit = function() {
-      return validateForm(); 
-    };
-  };
+  // 비밀번호 4글자 이상 체크
+  if (pw.length < 4) {
+    alert("비밀번호는 최소 4글자 이상이어야 합니다.");
+    document.getElementById("pw").focus();
+    return false;
+  }
+
+  // 이메일 @ 포함 체크
+  if (email.length === 0 || !email.includes("@")) {
+    alert("올바른 이메일을 입력해주세요.");
+    document.getElementById("email").focus();
+    return false;
+  }
+
+  // 생년월일 필수 체크
+  if (birth.length === 0) {
+    alert("생년월일을 입력해주세요.");
+    document.getElementById("birth").focus();
+    return false;
+  }
+
+ 
+  return true;
+}
+</script>
+
 </script>
 </head>
 <title>GDJ95 SHOP 회원가입</title>
@@ -181,7 +188,7 @@ p a:hover {
       </div>
       <div>
         <label for="phone">휴대폰번호</label>
-        <input type="tel" name="phone" id="phone" required pattern="\d{2,3}-\d{3,4}-\d{4}" placeholder="010-1234-5678" />
+        <input type="tel" name="phone" id="phone" required pattern="\d{2,3}\d{3,4}\d{4}" placeholder="01012345678" />
       </div>
       <div>
         <button type="submit">회원가입</button>

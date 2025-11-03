@@ -12,7 +12,7 @@ import java.io.IOException;
 public class AddMemberController extends HttpServlet {
 	//폼
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//addMember.jsp
+		request.getRequestDispatcher("/WEB-INF/view/customer/addCustomer.jsp").forward(request, response);
 	}
 	//액션
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
