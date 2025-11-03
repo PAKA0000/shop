@@ -12,8 +12,6 @@ import java.io.IOException;
 public class HomeController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/view/home.jsp").forward(request, response);
-
+		
 	}
-
-
 }
