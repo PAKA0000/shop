@@ -45,9 +45,6 @@ public class EmpDao extends DBConnection {
         return list;
     }
 
-
-	
-
     // 직원 추가 (INSERT)
     public int insertEmp(Emp e) {
         String sql = "INSERT INTO emp (emp_code, emp_id, emp_pw, emp_name, active, createdate) "
@@ -59,7 +56,7 @@ public class EmpDao extends DBConnection {
 
             stmt.setInt(1, e.getEmpCode());
             stmt.setString(2, e.getEmpId());
-            stmt.setString(3, e.getEmpPw()); // emp_pw
+            stmt.setString(3, e.getEmpPw()); 
             stmt.setString(4, e.getEmpName());
             stmt.setInt(5, e.getActive());
 
@@ -98,41 +95,11 @@ public class EmpDao extends DBConnection {
             ex.printStackTrace();
         }
 
-        return e; // null이면 로그인 실패
+        return e; 
     }
-
-
-    // 특정 직원 조회 (ID 기준)
-    public Emp selectEmpById(String id) {
-        String sql = "SELECT * FROM emp WHERE emp_id = ?";
-        Emp e = null;
-
-        try (Connection conn = getConn();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                e = new Emp();
-                e.setEmpCode(rs.getInt("emp_code"));
-                e.setEmpId(rs.getString("emp_id"));
-                e.setPw(rs.getString("emp_pw")); // emp_pw
-                e.setEmpName(rs.getString("emp_name"));
-                e.setActive(rs.getInt("active"));
-                e.setCreatedate(rs.getString("createdate"));
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        return e;
-    }
-
 
    
- // 직원 활성/비활성 상태 반전 (1↔0 토글)
+    // 직원 활성/비활성 상태 반전 
     public int toggleActive(String id) {
         String sql = "UPDATE emp SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE emp_id = ?";
         int row = 0;
@@ -150,8 +117,6 @@ public class EmpDao extends DBConnection {
         return row;
     }
 
-
-
     // 직원목록페이징
     public int selectEmpCount() throws SQLException {
         String sql = "SELECT COUNT(*) FROM emp";
@@ -162,6 +127,110 @@ public class EmpDao extends DBConnection {
         }
         return 0;
     }
+  
+    	
+    // 사원 정보 수정
+    public int updateEmp(Emp emp) throws SQLException {
+        String sql = """
+            UPDATE emp
+               SET emp_name = ?, active = ?
+             WHERE emp_id = ?
+        """;
+        try (Connection conn = getConn();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, emp.getEmpName());
+            stmt.setInt(2, emp.getActive());
+            stmt.setString(3, emp.getEmpId());
+            return stmt.executeUpdate();
+        }
+    }
 
+
+    //사원정보 삭제	
+
+    public int deleteEmp(String empId) throws SQLException {
+        String sql = "DELETE FROM emp WHERE emp_id = ?";
+        try (Connection conn = getConn();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, empId);
+            return stmt.executeUpdate();
+        }
+    }
+
+    public Emp selectEmpById(String empId) throws SQLException {
+        Emp emp = null;
+
+        String sql = "SELECT emp_id, emp_name, active FROM emp WHERE emp_id = ?";
+
+        try (Connection conn = getConn();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, empId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    emp = new Emp();
+                    emp.setEmpId(rs.getString("emp_id"));
+                    emp.setEmpName(rs.getString("emp_name"));
+                    emp.setActive(rs.getInt("active"));
+                }
+            }
+        }
+
+        return emp; 
+    }
+    
+    //중복아이디 사용불가
+    public String selectEmpCk(String id) throws SQLException {
+        String sql = """
+            SELECT t.id
+            FROM (
+                SELECT customer_id AS id FROM customer
+                UNION ALL
+                SELECT emp_id AS id FROM emp
+                UNION ALL
+                SELECT id FROM outid
+            ) t
+            WHERE t.id = ?
+        """;
+
+        try (Connection conn = getConn();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("id"); // 존재하면 해당 ID 반환
+                } else {
+                    return null; // 존재하지 않으면 null
+                }
+            }
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
-

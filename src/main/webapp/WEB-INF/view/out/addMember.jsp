@@ -4,12 +4,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>addMember</title>
+<title>shop</title>
 </head>
 <body>
-	<h1>addMember</h1>
 	<div>
-		<a href="${pageContext.request.contextPath}/out/login}">로그인</a>
+		<input type="text" id ="idck">
+		<button type="button">아이디 사용 여부</button> <!-- ajax 호출 -->
 	</div>
 </body>
 </html>

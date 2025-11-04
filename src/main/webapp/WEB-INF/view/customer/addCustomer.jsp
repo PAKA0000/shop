@@ -3,8 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style type="text/css">
-/* 전체 배경 */
+<meta charset="UTF-8">
+<title>GDJ95 SHOP 회원가입</title>
+<style>
 body {
   margin: 0;
   padding: 0;
@@ -15,8 +16,6 @@ body {
   align-items: center;
   min-height: 100vh;
 }
-
-/* 상단 헤더 */
 .header {
   width: 100%;
   text-align: center;
@@ -25,8 +24,6 @@ body {
   font-weight: 700;
   color: #333;
 }
-
-/* 카드 컨테이너 */
 .signup-container {
   width: 100%;
   max-width: 480px;
@@ -36,22 +33,17 @@ body {
   padding: 40px;
   margin-bottom: 40px;
 }
-
-/* 카드 안 문구 */
 .signup-container p {
   text-align: center;
   font-size: 14px;
   color: #666;
   margin-bottom: 32px;
 }
-
-/* 폼 */
 form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
 label {
   display: block;
   font-size: 14px;
@@ -59,12 +51,9 @@ label {
   margin-bottom: 6px;
   font-weight: 500;
 }
-
 input[type="text"],
 input[type="password"],
-input[type="email"],
-input[type="tel"],
-input[type="date"] {
+input[type="tel"] {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #dcdcdc;
@@ -72,14 +61,11 @@ input[type="date"] {
   font-size: 14px;
   transition: all 0.2s;
 }
-
 input:focus {
   outline: none;
   border-color: #2db400;
   box-shadow: 0 0 0 2px rgba(45,180,0,0.2);
 }
-
-/* 버튼 */
 button {
   width: 100%;
   padding: 14px;
@@ -92,105 +78,172 @@ button {
   cursor: pointer;
   transition: all 0.2s;
 }
-
 button:hover {
   background-color: #27a300;
 }
-
-/* 링크 */
 p a {
   color: #2db400;
   text-decoration: none;
 }
-
 p a:hover {
   text-decoration: underline;
 }
+#idCheckMsg {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: 600;
+}
+#checkIdBtn {
+  margin-top: 5px;
+  width: auto;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #2db400;
+  color: white;
+  transition: all 0.2s;
+}
+#checkIdBtn:hover {
+  background-color: #27a300;
+}
+#pwCheckMsg {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: 600;
+}
 </style>
-<meta charset="UTF-8">
 <script>
-function validateForm() {
-  // 입력값 가져오기
-  const id = document.getElementById("id").value.trim();
+let isIdAvailable = false;
+
+async function checkId() {
+  const idInput = document.getElementById("id");
+  const id = idInput.value.trim();
+  const msg = document.getElementById("idCheckMsg");
+
+  if (!id) {
+    alert("아이디를 입력하세요.");
+    return;
+  }
+
+  try {
+    const response = await fetch("${pageContext.request.contextPath}/customer/checkId?id=" + encodeURIComponent(id));
+    const result = await response.json();
+
+    if (result.available) {
+      msg.textContent = "✅ 사용 가능한 아이디입니다.";
+      msg.style.color = "green";
+      isIdAvailable = true;
+    } else {
+      msg.textContent = "❌ 이미 사용 중인 아이디: " + result.id;
+      msg.style.color = "red";
+      isIdAvailable = false;
+    }
+  } catch (err) {
+    console.error(err);
+    msg.textContent = "⚠️ 서버 오류 발생";
+    msg.style.color = "orange";
+    isIdAvailable = false;
+  }
+}
+
+// 비밀번호 확인 체크
+function checkPasswordMatch() {
   const pw = document.getElementById("pw").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const birth = document.getElementById("birth").value.trim();
+  const pwConfirm = document.getElementById("pwConfirm").value.trim();
+  const msg = document.getElementById("pwCheckMsg");
 
-  // 아이디 4글자 이상 체크
-  if (id.length < 4) {
+  if (pw !== pwConfirm) {
+    msg.textContent = "❌ 비밀번호가 일치하지 않습니다.";
+    msg.style.color = "red";
+    return false;
+  } else {
+    msg.textContent = "✅ 비밀번호가 일치합니다.";
+    msg.style.color = "green";
+    return true;
+  }
+}
+
+// 폼 제출 시 체크
+function validateForm() {
+  const idInput = document.getElementById("id");
+  const pwInput = document.getElementById("pw");
+  const pwConfirmInput = document.getElementById("pwConfirm");
+  const phoneInput = document.getElementById("phone");
+
+  if (!isIdAvailable) {
+    alert("아이디 중복 확인을 먼저 해주세요.");
+    idInput.focus();
+    return false;
+  }
+
+  if (idInput.value.trim().length < 4) {
     alert("아이디는 최소 4글자 이상이어야 합니다.");
-    document.getElementById("id").focus();
+    idInput.focus();
     return false;
   }
 
-  // 비밀번호 4글자 이상 체크
-  if (pw.length < 4) {
+  if (pwInput.value.trim().length < 4) {
     alert("비밀번호는 최소 4글자 이상이어야 합니다.");
-    document.getElementById("pw").focus();
+    pwInput.focus();
     return false;
   }
 
-  // 이메일 @ 포함 체크
-  if (email.length === 0 || !email.includes("@")) {
-    alert("올바른 이메일을 입력해주세요.");
-    document.getElementById("email").focus();
+  if (!checkPasswordMatch()) {
+    pwConfirmInput.focus();
     return false;
   }
 
-  // 생년월일 필수 체크
-  if (birth.length === 0) {
-    alert("생년월일을 입력해주세요.");
-    document.getElementById("birth").focus();
+  if (!phoneInput.value.trim()) {
+    alert("전화번호를 입력해주세요.");
+    phoneInput.focus();
     return false;
   }
 
- 
   return true;
 }
 </script>
-
-</script>
 </head>
-<title>GDJ95 SHOP 회원가입</title>
 <body>
-  <!-- 상단 헤더 -->
-  <div class="header">
-    GDJ95 SHOP 회원가입
-  </div>
 
-  <!-- 회원가입 카드 -->
-  <div class="signup-container">
-    <p>계정을 생성하고 쇼핑을 시작하세요</p>
-    <form method="post" action="${pageContext.request.contextPath}/customer/addMember">
-      <div>
-        <label for="id">아이디</label>
-        <input type="text" name="id" id="id" required />
-      </div>
-      <div>
-        <label for="pw">비밀번호</label>
-        <input type="password" name="pw" id="pw" required />
-      </div>
-      <div>
-        <label for="email">이메일</label>
-        <input type="email" name="email" id="email" required />
-      </div>
-      <div>
-        <label for="birth">생년월일</label>
-        <input type="date" name="birth" id="birth" required />
-      </div>
-      <div>
-        <label for="phone">휴대폰번호</label>
-        <input type="tel" name="phone" id="phone" required pattern="\d{2,3}\d{3,4}\d{4}" placeholder="01012345678" />
-      </div>
-      <div>
-        <button type="submit">회원가입</button>
-      </div>
-    </form>
-    <p>이미 계정이 있으신가요? 
-       <a href="${pageContext.request.contextPath}/out/login">로그인</a>
-    </p>
-  </div>
-  
+<div class="header">GDJ95 SHOP 회원가입</div>
+
+<div class="signup-container">
+  <p>계정을 생성하고 쇼핑을 시작하세요</p>
+  <form method="post" action="${pageContext.request.contextPath}/out/addMember" onsubmit="return validateForm();">
+    
+    <div>
+      <label for="id">아이디</label>
+      <input type="text" name="id" id="id" required />
+      <button type="button" id="checkIdBtn" onclick="checkId()">중복확인</button>
+      <span id="idCheckMsg"></span>
+    </div>
+
+    <div>
+      <label for="pw">비밀번호</label>
+      <input type="password" name="pw" id="pw" required oninput="checkPasswordMatch()" />
+    </div>
+
+    <div>
+      <label for="pwConfirm">비밀번호 확인</label>
+      <input type="password" name="pwConfirm" id="pwConfirm" required oninput="checkPasswordMatch()" />
+      <span id="pwCheckMsg"></span>
+    </div>
+
+    <div>
+      <label for="phone">휴대폰번호</label>
+      <input type="tel" name="phone" id="phone" required pattern="\d{2,3}\d{3,4}\d{4}" placeholder="01012345678" />
+    </div>
+
+    <div>
+      <button type="submit">회원가입</button>
+    </div>
+  </form>
+  <p>이미 계정이 있으신가요? 
+     <a href="${pageContext.request.contextPath}/out/login">로그인</a>
+  </p>
+</div>
+
 </body>
-
- 
+</html>

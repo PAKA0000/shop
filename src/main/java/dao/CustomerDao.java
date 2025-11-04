@@ -7,6 +7,31 @@ import java.util.List;
 import dto.Customer;
 
 public class CustomerDao extends DBConnection {
+	
+	//ID 사용기능 여부	
+	public String selectCustomerCk(String id) throws SQLException {
+		String sql = "SELECT t.id " +
+	             "FROM ( " +
+	             "  SELECT customer_id AS id FROM customer " +
+	             "  UNION ALL " +
+	             "  SELECT emp_id AS id FROM emp " +
+	             "  UNION ALL " +
+	             "  SELECT id FROM outid " +
+	             ") t " +
+	             "WHERE t.id = ?";
+
+
+	    try (Connection conn = getConn();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, id);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) return rs.getString("customer_id");
+	        }
+	    }
+	    return null; // 없으면 null 반환 → 사용 가능
+	}
+
+
 
     // 회원 가입 (INSERT)
     public int insertCustomer(Customer c) {

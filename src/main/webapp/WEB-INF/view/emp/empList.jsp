@@ -2,13 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>사원 목록</title>
 
 <style>
-/* ========== 기본 페이지 스타일 (네이버 감성) ========== */
+/* ====== 네이버 스타일 사원목록 ====== */
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f8f9fa;
@@ -21,7 +21,6 @@ body {
   margin: 50px auto;
 }
 
-/* 카드 형태 */
 .card {
   background: #fff;
   border-radius: 15px;
@@ -44,36 +43,24 @@ body {
   font-weight: 700;
 }
 
-/* 검색창 */
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.search-box input {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 5px;
-  outline: none;
-}
-
-.search-box button {
-  background: white;
-  border: none;
+/* 새 사원 등록 버튼 */
+.add-btn {
+  background-color: white;
   color: #03c75a;
   font-weight: 600;
+  border: none;
   border-radius: 5px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s;
 }
 
-.search-box button:hover {
-  background: #f1f1f1;
+.add-btn:hover {
+  background-color: #f1f1f1;
+  transform: scale(1.05);
 }
 
-/* 테이블 스타일 */
+/* 테이블 */
 .card-body {
   padding: 25px;
 }
@@ -125,7 +112,36 @@ body {
   transform: scale(1.05);
 }
 
-/* 등록일 스타일 */
+/* 수정/삭제 버튼 */
+.action-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.edit-btn {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.edit-btn:hover {
+  background: #dfe6e9;
+}
+
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #e84118;
+}
+
+/* 등록일 */
 .small-muted {
   color: #888;
   font-size: 13px;
@@ -168,10 +184,7 @@ body {
   <div class="card">
     <div class="card-header">
       <h2>사원 목록</h2>
-      <form class="search-box" action="${pageContext.request.contextPath}/emp/empList" method="get">
-       
-     
-      </form>
+      <button class="add-btn" onclick="location.href='${pageContext.request.contextPath}/emp/addEmp'">+ 새 사원 등록</button>
     </div>
 
     <div class="card-body">
@@ -183,6 +196,7 @@ body {
             <th>이름</th>
             <th>상태</th>
             <th>등록일</th>
+            <th>관리</th>
           </tr>
         </thead>
         <tbody>
@@ -198,6 +212,13 @@ body {
                 </button>
               </td>
               <td class="small-muted">${emp.createdate}</td>
+              <td>
+                <button class="action-btn edit-btn"
+                        onclick="location.href='${pageContext.request.contextPath}/emp/updateEmp?empId=${emp.empId}'">
+                  수정
+                </button>
+                <button class="action-btn delete-btn" data-empid="${emp.empId}">삭제</button>
+              </td>
             </tr>
           </c:forEach>
         </tbody>
@@ -224,20 +245,29 @@ body {
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const buttons = document.querySelectorAll(".toggle-btn");
+document.addEventListener("DOMContentLoaded", () => {
+  initToggle();
+  initDelete();
+});
 
-  buttons.forEach(btn => {
+// 활성/비활성 토글 기능
+function initToggle() {
+  document.querySelectorAll(".toggle-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const tr = btn.closest("tr");
       const empId = tr.dataset.empid;
       const currentActive = parseInt(btn.dataset.active);
       const newActive = currentActive === 1 ? 0 : 1;
 
+      const params = new URLSearchParams();
+      params.append("empId", empId);
+      params.append("active", newActive);
+
       const response = await fetch("${pageContext.request.contextPath}/emp/updateActive", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `empId=${empId}&active=${newActive}`
+        body: params.toString(),
+        cache: "no-store" // 🚫 캐시 방지
       });
 
       const result = await response.json();
@@ -247,11 +277,39 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.classList.toggle("on", newActive === 1);
         btn.classList.toggle("off", newActive === 0);
       } else {
-        alert("상태 변경 실패");
+        alert("상태 변경 실패: " + (result.message || "서버 오류"));
       }
     });
   });
-});
+}
+
+// ✅ 삭제 기능 (파라미터 누적 방지 + 안전 인코딩)
+function initDelete() {
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const empId = btn.dataset.empid;
+      if (!confirm(empId + " 사원을 삭제하시겠습니까?")) return;
+
+      const params = new URLSearchParams();
+      params.append("empId", empId);
+
+      const response = await fetch("${pageContext.request.contextPath}/emp/deleteEmp", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+        cache: "no-store"
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert("삭제 완료!");
+        btn.closest("tr").remove();
+      } else {
+        alert("삭제 실패: " + (result.message || "서버 오류"));
+      }
+    });
+  });
+}
 </script>
 
 </body>
