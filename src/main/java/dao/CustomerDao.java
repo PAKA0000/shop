@@ -13,39 +13,41 @@ public class CustomerDao extends DBConnection {
 	    PreparedStatement psmtCustomer = null;
 	    PreparedStatement psmtOutId = null;
 
-	    String sqlCustomer = "DELETE FROM customer WHERE customer_id = ?";
-	    String sqlOutid = "INSERT INTO outid (id, memo, createdate) VALUES (?, ?, SYSDATE)";
+	    String sqlCustomer = "DELETE FROM customer WHERE customer_id=?";
+	    String sqlOutid = "INSERT INTO outid(id, memo, createdate) VALUES(?, ?, SYSDATE)";
 
 	    try {
 	        conn = DBConnection.getConn();
 	        conn.setAutoCommit(false);
 
-	        // 1️⃣ 고객 삭제
 	        psmtCustomer = conn.prepareStatement(sqlCustomer);
 	        psmtCustomer.setString(1, outid.getId());
 	        int row = psmtCustomer.executeUpdate();
 
 	        if (row == 1) {
-	            // 2️⃣ 탈퇴회원 테이블에 추가
 	            psmtOutId = conn.prepareStatement(sqlOutid);
 	            psmtOutId.setString(1, outid.getId());
 	            psmtOutId.setString(2, outid.getMemo());
 	            psmtOutId.executeUpdate();
 	        } else {
-	            throw new SQLException("해당고객이 존재하지 않습니다");
+	            throw new SQLException("해당 고객이 존재하지 않습니다");
 	        }
 
 	        conn.commit();
 
 	    } catch (SQLException e) {
 	        if (conn != null) conn.rollback();
+	        if (e.getMessage().contains("ORA-00001")) {
+	            throw new SQLException("이미 탈퇴 처리된 고객입니다.");
+	        }
 	        throw e;
 	    } finally {
-	        if (psmtOutId != null) try { psmtOutId.close(); } catch (SQLException ignored) {}
-	        if (psmtCustomer != null) try { psmtCustomer.close(); } catch (SQLException ignored) {}
-	        if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
+	        if (psmtOutId != null) psmtOutId.close();
+	        if (psmtCustomer != null) psmtCustomer.close();
+	        if (conn != null) conn.close();
 	    }
-	}	 
+	}
+ 
 
 	
 	// 직원 로그인시 전체 고객 리스트 확인 (페이징 포함)
@@ -242,4 +244,5 @@ public class CustomerDao extends DBConnection {
 
         return row;
     }
+    
 }

@@ -7,9 +7,10 @@ import dto.Outid;
 
 public class OutidDao extends DBConnection {
 
-    public List<Outid> selectOutidList() {
+    // 전체 탈퇴 회원 목록
+    public List<Outid> selectOutidList() throws SQLException {
         List<Outid> list = new ArrayList<>();
-        String sql = "SELECT id, memo, createdate FROM outid ORDER BY createdate DESC";
+        String sql = "SELECT * FROM outid ORDER BY createdate DESC";
 
         try (Connection conn = getConn();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -22,9 +23,6 @@ public class OutidDao extends DBConnection {
                 o.setCreatedate(rs.getString("createdate"));
                 list.add(o);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         return list;
