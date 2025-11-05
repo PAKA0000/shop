@@ -3,64 +3,85 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import dto.Customer;
 import dto.Outid;
 
 public class CustomerDao extends DBConnection {
 	//직원에 의한 강제탈퇴
-	public void deleteCustomerByEmp(Outid outid) {
-		Connection conn = null;
-		PreparedStatement psmtCustomer = null;
-		PreparedStatement psmtOutId = null;
-		String sqlCustomer ="""
-					delete from customer where customer_id=?
-				
-				""";
-		String sqlOutid = """
-					insert into outid(id,memo,createdate)
-					values(?,?,?)
-				""";
-		
-		try {
-			conn = DBConnection.getConn();
-			conn.setAutoCommit(false);
-			psmtCustomer =conn.prepareStatement(sqlCustomer);
-			
-			//param 설정 ?: outid.getId();
-			int row = psmtCustomer.executeUpdate();
-			if(row ==1) {
-				psmtOutId = conn.prepareStatement(sqlOutid);
-				//parm 설정 :? ? sysdate
-				psmtOutId.executeUpdate();
-			}else {
-				throw new SQLException();
-			}
-			conn.commit();
-		} catch (SQLException e) {
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		}finally {
-		 try {
-			 	psmtOutId.close();
-				psmtCustomer.close();
-				conn.close();
-		} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		 
-	}
+	public void deleteCustomerByEmp(Outid outid) throws SQLException {
+	    Connection conn = null;
+	    PreparedStatement psmtCustomer = null;
+	    PreparedStatement psmtOutId = null;
+
+	    String sqlCustomer = "DELETE FROM customer WHERE customer_id = ?";
+	    String sqlOutid = "INSERT INTO outid (id, memo, createdate) VALUES (?, ?, SYSDATE)";
+
+	    try {
+	        conn = DBConnection.getConn();
+	        conn.setAutoCommit(false);
+
+	        // 1️⃣ 고객 삭제
+	        psmtCustomer = conn.prepareStatement(sqlCustomer);
+	        psmtCustomer.setString(1, outid.getId());
+	        int row = psmtCustomer.executeUpdate();
+
+	        if (row == 1) {
+	            // 2️⃣ 탈퇴회원 테이블에 추가
+	            psmtOutId = conn.prepareStatement(sqlOutid);
+	            psmtOutId.setString(1, outid.getId());
+	            psmtOutId.setString(2, outid.getMemo());
+	            psmtOutId.executeUpdate();
+	        } else {
+	            throw new SQLException("해당고객이 존재하지 않습니다");
+	        }
+
+	        conn.commit();
+
+	    } catch (SQLException e) {
+	        if (conn != null) conn.rollback();
+	        throw e;
+	    } finally {
+	        if (psmtOutId != null) try { psmtOutId.close(); } catch (SQLException ignored) {}
+	        if (psmtCustomer != null) try { psmtCustomer.close(); } catch (SQLException ignored) {}
+	        if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
+	    }
+	}	 
+
 	
-	// 직원 로그인시 전체 고객 리스트 확인
-	public List<Customer> selectCustomerList(int beginRow,int rowPerPage) throws SQLException{
-		return null;
+	// 직원 로그인시 전체 고객 리스트 확인 (페이징 포함)
+	public List<Customer> selectCustomerList(int beginRow, int rowPerPage) throws SQLException {
+	    List<Customer> list = new ArrayList<>();
+	    String sql = """
+	    	    SELECT customer_code, customer_id, customer_pw, customer_name, customer_phone, point, createdate
+	    	    FROM customer
+	    	    ORDER BY createdate DESC
+	    	    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+	    	""";
+
+
+	    try (Connection conn = getConn();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setInt(1, beginRow);
+	        stmt.setInt(2, rowPerPage);
+
+	        ResultSet rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	            Customer c = new Customer();
+	            c.setCustomerCode(rs.getInt("customer_code"));
+	            c.setCustomerId(rs.getString("customer_id"));
+	            c.setCustomerPw(rs.getString("customer_pw"));
+	            c.setCustomerName(rs.getString("customer_name"));
+	            c.setCustomerPhone(rs.getInt("customer_phone"));
+	            c.setPoint(rs.getInt("point"));
+	            c.setCreatedate(rs.getString("createdate"));
+	            list.add(c);
+	        }
+	    }
+	    return list;
 	}
+
 	
 	//JDBC 기본
 
