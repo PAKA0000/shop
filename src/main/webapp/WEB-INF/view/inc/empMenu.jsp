@@ -3,4 +3,7 @@
 <div>
 	<!-- 메인 메뉴 -->
 	<a href="${pageContext.request.contextPath}/emp/empList">[사원관리]</a>
+	<a href="${pageContext.request.contextPath}/emp/customerList">[고객관리]</a>
+	<a href="${pageContext.request.contextPath}/emp/OutidList">[탈퇴ID관리]</a>
+	<a href="${pageContext.request.contextPath}/emp/goodsList">[상품관리]</a>
 </div>

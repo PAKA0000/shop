@@ -5,9 +5,65 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dto.Customer;
+import dto.Outid;
 
 public class CustomerDao extends DBConnection {
+	//직원에 의한 강제탈퇴
+	public void deleteCustomerByEmp(Outid outid) {
+		Connection conn = null;
+		PreparedStatement psmtCustomer = null;
+		PreparedStatement psmtOutId = null;
+		String sqlCustomer ="""
+					delete from customer where customer_id=?
+				
+				""";
+		String sqlOutid = """
+					insert into outid(id,memo,createdate)
+					values(?,?,?)
+				""";
+		
+		try {
+			conn = DBConnection.getConn();
+			conn.setAutoCommit(false);
+			psmtCustomer =conn.prepareStatement(sqlCustomer);
+			
+			//param 설정 ?: outid.getId();
+			int row = psmtCustomer.executeUpdate();
+			if(row ==1) {
+				psmtOutId = conn.prepareStatement(sqlOutid);
+				//parm 설정 :? ? sysdate
+				psmtOutId.executeUpdate();
+			}else {
+				throw new SQLException();
+			}
+			conn.commit();
+		} catch (SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}finally {
+		 try {
+			 	psmtOutId.close();
+				psmtCustomer.close();
+				conn.close();
+		} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		 
+	}
 	
+	// 직원 로그인시 전체 고객 리스트 확인
+	public List<Customer> selectCustomerList(int beginRow,int rowPerPage) throws SQLException{
+		return null;
+	}
+	
+	//JDBC 기본
+
 	//ID 사용기능 여부	
 	public String selectCustomerCk(String id) throws SQLException {
 		String sql = "SELECT t.id " +
@@ -157,24 +213,6 @@ public class CustomerDao extends DBConnection {
             stmt.setInt(3, c.getCustomerPhone());
             stmt.setString(4, c.getCustomerId());
 
-            row = stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return row;
-    }
-
-    // 회원 삭제
-    public int deleteCustomer(String id) {
-        String sql = "DELETE FROM customer WHERE customer_id = ?";
-        int row = 0;
-
-        try (Connection conn = getConn();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, id);
             row = stmt.executeUpdate();
 
         } catch (SQLException e) {
