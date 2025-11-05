@@ -200,9 +200,9 @@ public class EmpDao extends DBConnection {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("id"); // 존재하면 해당 ID 반환
+                    return rs.getString("id"); 
                 } else {
-                    return null; // 존재하지 않으면 null
+                    return null; 
                 }
             }
         }

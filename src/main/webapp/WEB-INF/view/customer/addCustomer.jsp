@@ -132,11 +132,11 @@ async function checkId() {
     const result = await response.json();
 
     if (result.available) {
-      msg.textContent = "✅ 사용 가능한 아이디입니다.";
+      msg.textContent = "사용 가능한 아이디입니다.";
       msg.style.color = "green";
       isIdAvailable = true;
     } else {
-      msg.textContent = "❌ 이미 사용 중인 아이디: " + result.id;
+      msg.textContent = "이미 사용 중인 아이디입니다 다른 아이디를 선택해주세요. " 
       msg.style.color = "red";
       isIdAvailable = false;
     }

@@ -7,7 +7,7 @@ import java.io.IOException;
 import dao.CustomerDao;
 import dto.Customer;
 
-@WebServlet("/customer/addCustomer")
+@WebServlet("out/customer/addCustomer")
 public class AddCustomerController extends HttpServlet {
 
     @Override

@@ -14,18 +14,23 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-
-//@WebFilter("/emp/*")
-public class EmpFilter extends HttpFilter implements Filter {
-       
+//로그인 전 허용
+//@WebFilter("/out/*")
+public class Out extends HttpFilter implements Filter {
+	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpSession session =((HttpServletRequest)request).getSession();  
-		if(session.getAttribute("loginEmp")==null) {
-			  ((HttpServletResponse)response).sendRedirect(((HttpServletRequest)request).getContextPath()+ "/out/login");
-			    return;
+		//요청 전
+		HttpSession session =((HttpServletRequest)request).getSession();
+		if(session.getAttribute("loginEmp")!=null) {
+			((HttpServletResponse)response).sendRedirect(((HttpServletRequest)request).getContextPath()+ "/emp/empIndex");
+			return;
+		}else if(session.getAttribute("loginCustomer")!=null) {
+			((HttpServletResponse)response).sendRedirect(((HttpServletRequest)request).getContextPath()+ "/customer/customerIndex");
+			return;
 		}
 		chain.doFilter(request, response);
+		// 요청 후
 	}
+
+	
 }
-
-
