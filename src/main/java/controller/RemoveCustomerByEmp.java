@@ -50,7 +50,6 @@ public class RemoveCustomerByEmp extends HttpServlet {
         }
     }
 
-    // GET 요청은 customerList 페이지로 리다이렉트
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.sendRedirect(request.getContextPath() + "/emp/customerList");

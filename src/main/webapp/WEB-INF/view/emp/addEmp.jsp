@@ -26,6 +26,8 @@ button:hover { background-color: #02b350; }
 <div class="card">
   <h2>새 사원 등록</h2>
   <form id="addEmpForm" action="${pageContext.request.contextPath}/emp/addEmp" method="post">
+    
+    <!-- 아이디 입력 -->
     <div class="form-group">
       <label for="empId">아이디</label>
       <input type="text" id="empId" name="empId" required>
@@ -33,19 +35,31 @@ button:hover { background-color: #02b350; }
       <span id="idCheckMsg"></span>
     </div>
 
+    <!-- 비밀번호 -->
     <div class="form-group">
       <label for="empPw">비밀번호</label>
       <input type="password" id="empPw" name="empPw" required>
     </div>
 
+    <!-- 비밀번호 확인 -->
     <div class="form-group">
       <label for="empPwConfirm">비밀번호 확인</label>
       <input type="password" id="empPwConfirm" name="empPwConfirm" required>
     </div>
 
+    <!-- 이름 -->
     <div class="form-group">
       <label for="empName">이름</label>
       <input type="text" id="empName" name="empName" required>
+    </div>
+
+    <!-- ✅ 활성/비활성 상태 선택 -->
+    <div class="form-group">
+      <label for="active">상태</label>
+      <select id="active" name="active" required>
+        <option value="1" selected>활성</option>
+        <option value="0">비활성</option>
+      </select>
     </div>
 
     <button type="submit" id="submitBtn">사원 등록</button>
@@ -63,6 +77,7 @@ const idMsg = document.querySelector("#idCheckMsg");
 
 let isIdAvailable = false;
 
+// ✅ 아이디 중복확인
 checkBtn.addEventListener("click", async () => {
   const id = idInput.value.trim();
   if (!id) { alert("아이디를 입력하세요."); return; }
@@ -75,7 +90,7 @@ checkBtn.addEventListener("click", async () => {
       idMsg.style.color = "green";
       isIdAvailable = true;
     } else {
-      idMsg.textContent = "이미 사용 중인 아이디입니다. 다른 아이디를 선택해주세요";
+      idMsg.textContent = "이미 사용 중인 아이디입니다. 다른 아이디를 선택해주세요.";
       idMsg.style.color = "red";
       isIdAvailable = false;
     }
@@ -87,6 +102,7 @@ checkBtn.addEventListener("click", async () => {
   }
 });
 
+// ✅ 폼 제출 전 검증
 document.querySelector("#addEmpForm").addEventListener("submit", (e) => {
   if (!isIdAvailable) {
     e.preventDefault();

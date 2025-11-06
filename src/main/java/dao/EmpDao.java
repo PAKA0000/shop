@@ -47,27 +47,28 @@ public class EmpDao extends DBConnection {
 
     // 직원 추가 (INSERT)
     public int insertEmp(Emp e) {
-        String sql = "INSERT INTO emp (emp_code, emp_id, emp_pw, emp_name, active, createdate) "
-                   + "VALUES (?, ?, ?, ?, ?, SYSDATE)";
-        int row = 0;
+        String sql = """
+            INSERT INTO emp (emp_code, emp_id, emp_pw, emp_name, active, createdate)
+            VALUES (seq_emp.NEXTVAL, ?, ?, ?, ?, SYSDATE)
+        """;
 
+        int row = 0;
         try (Connection conn = getConn();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, e.getEmpCode());
-            stmt.setString(2, e.getEmpId());
-            stmt.setString(3, e.getEmpPw()); 
-            stmt.setString(4, e.getEmpName());
-            stmt.setInt(5, e.getActive());
+            stmt.setString(1, e.getEmpId());
+            stmt.setString(2, e.getEmpPw());
+            stmt.setString(3, e.getEmpName());
+            stmt.setInt(4, e.getActive());
 
             row = stmt.executeUpdate();
-
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
         return row;
     }
+
 
     // 직원 로그인 (ID & PW)
     public Emp login(String id, String pw) {

@@ -26,14 +26,18 @@ public class AddEmpController extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        int empCode = Integer.parseInt(request.getParameter("empCode"));
         String empId = request.getParameter("empId");
         String empPw = request.getParameter("empPw");
         String empName = request.getParameter("empName");
-        int active = Integer.parseInt(request.getParameter("active"));
+
+        // active 기본값 1(활성)
+        String activeParam = request.getParameter("active");
+        int active = 1;
+        if (activeParam != null && !activeParam.isEmpty()) {
+            active = Integer.parseInt(activeParam);
+        }
 
         Emp e = new Emp();
-        e.setEmpCode(empCode);
         e.setEmpId(empId);
         e.setPw(empPw);
         e.setEmpName(empName);
@@ -43,10 +47,10 @@ public class AddEmpController extends HttpServlet {
         int row = dao.insertEmp(e);
 
         if (row > 0) {
-            System.out.println("사원 등록 성공");
+            System.out.println("✅ 사원 등록 성공");
             response.sendRedirect(request.getContextPath() + "/emp/empList");
         } else {
-            System.out.println("사원 등록 실패");
+            System.out.println("❌ 사원 등록 실패");
             response.sendRedirect(request.getContextPath() + "/emp/addEmp?error=fail");
         }
     }
