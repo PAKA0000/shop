@@ -9,7 +9,7 @@ import java.io.IOException;
 
 
 @WebServlet("/addressList")
-public class addressList extends HttpServlet {
+public class AddressList extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getRequestDispatcher("/WEB-INF/view/customer/addressList.jsp").forward(request, response);

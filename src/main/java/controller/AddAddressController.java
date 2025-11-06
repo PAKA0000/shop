@@ -9,26 +9,52 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/customer/addAddress")
 public class AddAddressController extends HttpServlet {
-	private AddressDao addressDao;
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/view/customer/addAddress.jsp").forward(request, response);
-	}
+    private AddressDao addressDao;
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// request.getParameter()
-		String[] addressArr = request.getParameterValues("address");
-		String address = String.join("", addressArr);
-		System.out.print("address"+address);
-	//	Address address = new Address();
-	//	addressDao = new AddressDao();
-	//	addressDao.insertAddress(address);
-		
-		response.sendRedirect(request.getContextPath()+"/customer/addressList");
-	}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 세션 확인
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginCustomerCode") == null) {
+            response.sendRedirect(request.getContextPath() + "/customer/login");
+            return;
+        }
 
+        request.getRequestDispatcher("/WEB-INF/view/customer/addAddress.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginCustomerCode") == null) {
+            response.sendRedirect(request.getContextPath() + "/customer/login");
+            return;
+        }
+
+        Integer customerCodeObj = (Integer) session.getAttribute("loginCustomerCode");
+        int customerCode = customerCodeObj.intValue();
+
+        // 주소 입력값 가져오기 (우편번호 + 도로명 + 지번 + 상세 + 참고)
+        String postcode = request.getParameter("postcode");
+        String roadAddr = request.getParameter("roadAddress");
+        String jibunAddr = request.getParameter("jibunAddress");
+        String detailAddr = request.getParameter("detailAddress");
+        String extraAddr = request.getParameter("extraAddress");
+
+        // 주소 합치기
+        String fullAddress = String.join(" ", postcode, roadAddr, jibunAddr, detailAddr, extraAddr).trim();
+
+        Address address = new Address();
+        address.setCustomerCode(customerCode);
+        address.setAddress(fullAddress);
+
+        addressDao = new AddressDao();
+        addressDao.insertAddress(address);
+
+        response.sendRedirect(request.getContextPath() + "/customer/addressList");
+    }
 }
