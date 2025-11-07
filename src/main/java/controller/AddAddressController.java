@@ -15,17 +15,7 @@ import jakarta.servlet.http.HttpSession;
 public class AddAddressController extends HttpServlet {
     private AddressDao addressDao;
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 세션 확인
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loginCustomerCode") == null) {
-            response.sendRedirect(request.getContextPath() + "/customer/login");
-            return;
-        }
-
-        request.getRequestDispatcher("/WEB-INF/view/customer/addAddress.jsp").forward(request, response);
-    }
+   
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

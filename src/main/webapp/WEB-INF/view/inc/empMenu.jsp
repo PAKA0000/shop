@@ -69,7 +69,7 @@
 
 <div class="emp-navbar">
     <!-- 좌측 로고 -->
-    <a href="${pageContext.request.contextPath}/emp/empIndex" class="logo">🛍️ 관리자 메뉴</a>
+    <a href="${pageContext.request.contextPath}/emp/empIndex" class="logo">관리자 메뉴</a>
 
     <!-- 중앙 메뉴 -->
     <div class="nav-links">
