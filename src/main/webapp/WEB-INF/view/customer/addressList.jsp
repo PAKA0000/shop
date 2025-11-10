@@ -4,178 +4,146 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>배송지 관리 | N-Shop</title>
+<title>배송지 관리 | GDJ95 SHOP</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <style>
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f8f9fa;
-  margin: 0;
-  padding: 0;
-}
+body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; margin:0; padding:0; }
+.container { width:900px; margin:40px auto; background:#fff; padding:40px; border-radius:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+h1 { text-align:center; color:#03c75a; margin-bottom:25px; }
+.menu { text-align:center; margin-bottom:20px; }
+.menu button { color:#fff; background:#03c75a; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer; transition:all 0.2s;}
+.menu button:hover { background:#02b350; }
 
-.container {
-  width: 900px;
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  margin: 40px auto;
-  padding: 40px;
-}
+.table { width:100%; border-collapse:collapse; margin-top:20px; }
+.table th, .table td { padding:12px 10px; border-bottom:1px solid #eee; text-align:left;}
+.table th { background:#fafafa; font-weight:600; color:#444; }
+.table tr:hover { background:#f9f9f9; }
+.btn { padding:6px 12px; font-size:13px; border:none; border-radius:5px; cursor:pointer; transition:all 0.2s; }
+.btn-gray { background:#e9ecef; color:#333; } .btn-gray:hover { background:#dee2e6; }
 
-h1 {
-  color: #03c75a;
-  font-size: 28px;
-  text-align: center;
-  margin-bottom: 25px;
-}
+.no-data { text-align:center; color:#777; padding:30px 0; }
+.note { text-align:center; font-size:13px; color:#666; margin-top:20px; }
 
-.menu {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.menu a {
-  color: #03c75a;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 6px;
-  border: 1px solid #03c75a;
-  transition: all 0.2s;
-}
-
-.menu a:hover {
-  background-color: #03c75a;
-  color: white;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.table th, .table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-.table th {
-  background-color: #fafafa;
-  font-weight: 600;
-  color: #444;
-}
-
-.table tr:hover {
-  background-color: #f9f9f9;
-}
-
-.btn {
-  padding: 6px 12px;
-  font-size: 13px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-green {
-  background-color: #03c75a;
-  color: white;
-}
-
-.btn-green:hover {
-  background-color: #02b350;
-}
-
-.btn-gray {
-  background-color: #e9ecef;
-  color: #333;
-}
-
-.btn-gray:hover {
-  background-color: #dee2e6;
-}
-
-.no-data {
-  text-align: center;
-  color: #777;
-  padding: 30px 0;
-}
-
-.note {
-  margin-top: 20px;
-  font-size: 13px;
-  color: #666;
-  text-align: center;
-}
+/* 모달 스타일 */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); justify-content:center; align-items:center; }
+.modal-content { background:#fff; padding:30px; border-radius:10px; width:480px; position:relative; }
+.modal-content h2 { text-align:center; color:#03c75a; margin-bottom:20px; }
+.close { position:absolute; top:10px; right:10px; cursor:pointer; font-weight:bold; font-size:18px; color:#999; }
+input[type="text"] { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px; }
+input:focus { outline:none; border-color:#03c75a; }
+button.submit-btn { width:100%; background:#03c75a; color:#fff; padding:12px; font-weight:600; border-radius:6px; border:none; cursor:pointer; transition:all 0.2s; }
+button.submit-btn:hover { background:#02b350; }
 </style>
 </head>
-
 <body>
 <div class="container">
-  <h1>배송지 관리</h1>
+<h1>배송지 관리</h1>
 
-  <!-- 고객 메뉴 include -->
-  <c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
-  <hr>
+<!-- 메뉴 include -->
+<c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
+<hr>
 
-  <div class="menu">
-    <a href="${pageContext.request.contextPath}/customer/addAddress">＋ 새 배송지 추가</a>
-  </div>
+<div class="menu">
+  <button id="openModalBtn">＋ 새 배송지 추가</button>
+</div>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>주소</th>
-        <th>우편번호</th>
-        <th>상세주소</th>
-        <th>기본배송지</th>
-        <th>관리</th>
+<table class="table">
+<thead>
+<tr>
+  <th>주소</th>
+  <th>등록일</th>
+  <th>관리</th>
+</tr>
+</thead>
+<tbody id="addressTableBody">
+<c:choose>
+  <c:when test="${empty addressList}">
+    <tr><td colspan="3" class="no-data">등록된 배송지가 없습니다.</td></tr>
+  </c:when>
+  <c:otherwise>
+    <c:forEach var="a" items="${addressList}">
+      <tr data-code="${a.addressCode}">
+        <td>${a.address}</td>
+        <td>${a.createdate}</td>
+        <td>
+          <button class="btn btn-gray delete-btn" data-code="${a.addressCode}">삭제</button>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <c:choose>
-        <c:when test="${empty addressList}">
-          <tr><td colspan="5" class="no-data">등록된 배송지가 없습니다.</td></tr>
-        </c:when>
-        <c:otherwise>
-          <c:forEach var="a" items="${addressList}">
-            <tr>
-              <td>${a.roadAddress} ${a.extraAddress}</td>
-              <td>${a.postcode}</td>
-              <td>${a.detailAddress}</td>
-              <td>
-                <c:choose>
-                  <c:when test="${a.defaultAddress eq 'Y'}">✅ 기본</c:when>
-                  <c:otherwise>
-                    <form method="post" action="${pageContext.request.contextPath}/customer/setDefaultAddress" style="display:inline;">
-                      <input type="hidden" name="addressNo" value="${a.addressNo}">
-                      <button type="submit" class="btn btn-gray">기본으로 설정</button>
-                    </form>
-                  </c:otherwise>
-                </c:choose>
-              </td>
-              <td>
-                <form method="post" action="${pageContext.request.contextPath}/customer/deleteAddress" style="display:inline;">
-                  <input type="hidden" name="addressNo" value="${a.addressNo}">
-                  <button type="submit" class="btn btn-gray">삭제</button>
-                </form>
-              </td>
-            </tr>
-          </c:forEach>
-        </c:otherwise>
-      </c:choose>
-    </tbody>
-  </table>
+    </c:forEach>
+  </c:otherwise>
+</c:choose>
+</tbody>
+</table>
 
-  <div class="note">
-    배송지는 최대 <strong>5개</strong>까지 등록할 수 있으며,<br>
-    6번째 입력 시 가장 오래된 배송지가 자동으로 삭제됩니다.
+<div class="note">
+배송지는 최대 <strong>5개</strong>까지 등록 가능하며,<br>
+6번째 입력 시 가장 오래된 배송지가 자동 삭제됩니다.
+</div>
+</div>
+
+<!-- 모달 -->
+<div class="modal" id="addModal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>배송지 추가</h2>
+    <input type="text" id="postcode" placeholder="우편번호" readonly>
+    <input type="text" id="roadAddress" placeholder="도로명 주소" readonly>
+    <input type="text" id="jibunAddress" placeholder="지번 주소" readonly>
+    <input type="text" id="detailAddress" placeholder="상세 주소">
+    <input type="text" id="extraAddress" placeholder="요청사항">
+    <button class="submit-btn" id="addAddressBtn">추가</button>
   </div>
 </div>
+
+<!-- 다음 주소 API -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+// 모달 열기/닫기
+$('#openModalBtn').click(function(){ $('#addModal').css('display','flex'); });
+$('#closeModal').click(function(){ $('#addModal').hide(); });
+
+// 주소 검색
+$('#postcode, #roadAddress, #jibunAddress').click(sample4_execDaumPostcode);
+function sample4_execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            $('#postcode').val(data.zonecode);
+            $('#roadAddress').val(data.roadAddress);
+            $('#jibunAddress').val(data.jibunAddress);
+            let extra = '';
+            if(data.bname && /[동|로|가]$/g.test(data.bname)) extra += data.bname;
+            if(data.buildingName && data.apartment === 'Y') extra += (extra ? ', ' + data.buildingName : data.buildingName);
+            if(extra) extra = '(' + extra + ')';
+            $('#extraAddress').val(extra);
+        }
+    }).open();
+}
+
+// 배송지 추가 AJAX
+$('#addAddressBtn').click(function(){
+    const data = {
+        postcode: $('#postcode').val(),
+        roadAddress: $('#roadAddress').val(),
+        jibunAddress: $('#jibunAddress').val(),
+        detailAddress: $('#detailAddress').val(),
+        extraAddress: $('#extraAddress').val()
+    };
+    if(!data.detailAddress){ alert('상세주소를 입력하세요.'); return; }
+
+    $.post('${pageContext.request.contextPath}/customer/addAddress', data, function(resp){
+        location.reload(); // 추가 후 새로고침으로 목록 갱신
+    });
+});
+
+// 배송지 삭제 AJAX
+$('.delete-btn').click(function(){
+    const code = $(this).data('code');
+    if(confirm('정말 삭제하시겠습니까?')){
+        $.post('${pageContext.request.contextPath}/customer/deleteAddress', {addressCode: code}, function(){
+            $('tr[data-code="'+code+'"]').remove();
+        });
+    }
+});
+</script>
 </body>
 </html>

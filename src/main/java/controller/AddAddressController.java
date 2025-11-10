@@ -1,8 +1,10 @@
 package controller;
 
 import java.io.IOException;
+
 import dao.AddressDao;
 import dto.Address;
+import dto.Customer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,73 +17,49 @@ public class AddAddressController extends HttpServlet {
 
     private AddressDao addressDao = new AddressDao();
 
-    // ----------------------------------------
-    // GET 요청: 배송지 입력 폼 보여주기
-    // ----------------------------------------
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 세션 확인
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loginCustomerCode") == null) {
-            // 로그인 안 된 경우 로그인 페이지로 이동
-            response.sendRedirect(request.getContextPath() + "/customer/login");
+        Customer loginCustomer = (session != null) ? (Customer) session.getAttribute("loginCustomer") : null;
+
+        if (loginCustomer == null) {
+            response.sendRedirect(request.getContextPath() + "/out/login");
             return;
         }
 
-        // 배송지 등록 폼 JSP로 포워드
-        request.getRequestDispatcher("/WEB-INF/view/customer/addAddressForm.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/customer/addAddress.jsp").forward(request, response);
     }
 
-    // ----------------------------------------
-    // POST 요청: 배송지 등록 처리
-    // ----------------------------------------
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 세션 확인
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loginCustomerCode") == null) {
-            response.sendRedirect(request.getContextPath() + "/out/login.jsp");
+        Customer loginCustomer = (session != null) ? (Customer) session.getAttribute("loginCustomer") : null;
+
+        if (loginCustomer == null) {
+            response.sendRedirect(request.getContextPath() + "/out/login");
             return;
         }
 
-        // 한글 인코딩 처리
-        request.setCharacterEncoding("UTF-8");
-
-        // 세션에서 고객 코드 가져오기
-        int customerCode = (int) session.getAttribute("loginCustomerCode");
-
-        // 요청 파라미터 받기 (폼 필드 이름과 맞춰야 함)
+        // 폼 데이터 가져오기
         String postcode = request.getParameter("postcode");
-        String roadAddr = request.getParameter("roadAddress");
-        String jibunAddr = request.getParameter("jibunAddress");
-        String detailAddr = request.getParameter("detailAddress");
-        String extraAddr = request.getParameter("extraAddress");
+        String roadAddress = request.getParameter("roadAddress");
+        String jibunAddress = request.getParameter("jibunAddress");
+        String detailAddress = request.getParameter("detailAddress");
+        String extraAddress = request.getParameter("extraAddress");
 
-        // 주소 합치기
-        StringBuilder fullAddress = new StringBuilder();
-        if (postcode != null && !postcode.isEmpty()) fullAddress.append("(").append(postcode).append(") ");
-        if (roadAddr != null && !roadAddr.isEmpty()) fullAddress.append(roadAddr).append(" ");
-        if (jibunAddr != null && !jibunAddr.isEmpty()) fullAddress.append(jibunAddr).append(" ");
-        if (detailAddr != null && !detailAddr.isEmpty()) fullAddress.append(detailAddr).append(" ");
-        if (extraAddr != null && !extraAddr.isEmpty()) fullAddress.append(extraAddr);
+        // 주소 합치기 (원하면)
+        String fullAddress = "[" + postcode + "] " + roadAddress + " " + jibunAddress + " " + detailAddress + " " + extraAddress;
 
         Address address = new Address();
-        address.setCustomerCode(customerCode);
-        address.setAddress(fullAddress.toString().trim());
+        address.setCustomerCode(loginCustomer.getCustomerCode());
+        address.setAddress(fullAddress);
 
-        try {
-            addressDao.insertAddress(address);
-            // 주소 등록 후 주소 목록 페이지로 리다이렉트
-            response.sendRedirect(request.getContextPath() + "/customer/addressList");
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 오류 발생 시 폼으로 다시 포워드
-            request.setAttribute("errorMsg", "주소 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
-            request.getRequestDispatcher("/WEB-INF/view/customer/addAddressForm.jsp")
-                   .forward(request, response);
-        }
+        // DAO에 저장
+        addressDao.insertAddress(address);
+
+        // 목록 페이지로 이동
+        response.sendRedirect(request.getContextPath() + "/customer/addressList");
     }
 }

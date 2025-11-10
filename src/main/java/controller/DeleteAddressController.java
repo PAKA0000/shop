@@ -9,22 +9,36 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import dto.Customer;
 
 @WebServlet("/customer/deleteAddress")
 public class DeleteAddressController extends HttpServlet {
+
     private AddressDao addressDao = new AddressDao();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 세션 확인
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("loginCustomerCode") == null) {
-            response.sendRedirect(request.getContextPath() + "/customer/login");
+        Customer loginCustomer = (session != null) ? (Customer) session.getAttribute("loginCustomer") : null;
+
+        if (loginCustomer == null) {
+            response.sendRedirect(request.getContextPath() + "/out/login");
             return;
         }
 
-        int addressCode = Integer.parseInt(request.getParameter("addressCode"));
-        addressDao.deleteAddress(addressCode);
+        String addressCodeStr = request.getParameter("addressCode");
 
+        if (addressCodeStr != null) {
+            try {
+                int addressCode = Integer.parseInt(addressCodeStr);
+                addressDao.deleteAddress(addressCode);
+            } catch (NumberFormatException e) {
+                e.printStackTrace(); // 필요 시 로깅
+            }
+        }
+
+        // 삭제 후 목록 페이지로 이동
         response.sendRedirect(request.getContextPath() + "/customer/addressList");
     }
 }
