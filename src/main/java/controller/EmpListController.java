@@ -31,16 +31,27 @@ public class EmpListController extends HttpServlet {
 
         try {
             empList = empDao.selectEmpListByPage(beginRow, rowPerPage);
-            totalCount = empDao.selectEmpCount(); //전체직원수
-            lastPage = (int) Math.ceil((double) totalCount / rowPerPage);
+            totalCount = empDao.selectEmpCount(); // 전체 직원 수
+            lastPage = (totalCount % rowPerPage == 0) ? (totalCount / rowPerPage) : (totalCount / rowPerPage + 1);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-       
+        // 페이징 블록 계산 (한 블록 10페이지)
+        int pagePerBlock = 10;
+        int startPage = ((currentPage - 1) / pagePerBlock) * pagePerBlock + 1;
+        int endPage = startPage + pagePerBlock - 1;
+        if (endPage > lastPage) {
+            endPage = lastPage;
+        }
+
+        // JSP 전달
         request.setAttribute("empList", empList);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("lastPage", lastPage);
+        request.setAttribute("startPage", startPage);
+        request.setAttribute("endPage", endPage);
 
         request.getRequestDispatcher("/WEB-INF/view/emp/empList.jsp")
                .forward(request, response);

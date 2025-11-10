@@ -27,11 +27,12 @@ public class AddCustomerController extends HttpServlet {
         String pw = request.getParameter("pw");
         String pwConfirm = request.getParameter("pwConfirm");
         String name = request.getParameter("name");
-        String phoneStr = request.getParameter("phone");
+        String phone = request.getParameter("phone"); // ⚠ String으로 받음
 
         // 필수 입력값 체크
-        if(id == null || pw == null || pwConfirm == null || name == null || phoneStr == null ||
-           id.isEmpty() || pw.isEmpty() || pwConfirm.isEmpty() || name.isEmpty() || phoneStr.isEmpty()) {
+        if(id == null || pw == null || pwConfirm == null || name == null || phone == null ||
+           id.isEmpty() || pw.isEmpty() || pwConfirm.isEmpty() || name.isEmpty() || phone.isEmpty()) {
+            response.getWriter().println("<script>alert('모든 필드를 입력해주세요.'); history.back();</script>");
             return;
         }
 
@@ -41,10 +42,8 @@ public class AddCustomerController extends HttpServlet {
             return;
         }
 
-        int phone = 0;
-        try {
-            phone = Integer.parseInt(phoneStr);
-        } catch(NumberFormatException e) {
+        // 전화번호 검증: 숫자만 포함되는지 체크 (선택적)
+        if(!phone.matches("\\d+")) {
             response.getWriter().println("<script>alert('전화번호는 숫자만 입력해주세요.'); history.back();</script>");
             return;
         }
@@ -61,7 +60,7 @@ public class AddCustomerController extends HttpServlet {
             customer.setCustomerId(id);
             customer.setCustomerPw(pw);
             customer.setCustomerName(name);
-            customer.setCustomerPhone(phone);
+            customer.setCustomerPhone(phone); // ⚠ String
             customer.setPoint(0);
 
             int row = dao.insertCustomer(customer);

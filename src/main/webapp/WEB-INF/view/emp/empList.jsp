@@ -43,7 +43,6 @@ body {
   font-weight: 700;
 }
 
-/* 새 사원 등록 버튼 */
 .add-btn {
   background-color: white;
   color: #03c75a;
@@ -60,7 +59,6 @@ body {
   transform: scale(1.05);
 }
 
-/* 테이블 */
 .card-body {
   padding: 25px;
 }
@@ -87,7 +85,6 @@ body {
   background-color: #fafafa;
 }
 
-/* 상태 버튼 */
 .toggle-btn {
   border: none;
   padding: 6px 12px;
@@ -112,7 +109,6 @@ body {
   transform: scale(1.05);
 }
 
-/* 수정/삭제 버튼 */
 .action-btn {
   padding: 6px 10px;
   border: none;
@@ -141,13 +137,11 @@ body {
   background: #e84118;
 }
 
-/* 등록일 */
 .small-muted {
   color: #888;
   font-size: 13px;
 }
 
-/* 페이징 */
 .pagination {
   display: flex;
   justify-content: center;
@@ -226,19 +220,26 @@ body {
 
       <!-- 페이징 -->
       <div class="pagination">
-        <c:if test="${currentPage > 1}">
-          <a class="page-btn" href="?currentPage=${currentPage - 1}">&laquo;</a>
+        <a class="page-btn" href="?currentPage=1">처음</a>
+        <c:if test="${startPage > 1}">
+          <a class="page-btn" href="?currentPage=${startPage-10}">이전</a>
         </c:if>
 
-        <c:forEach var="i" begin="1" end="${lastPage}">
-          <a class="page-btn ${i == currentPage ? 'active' : ''}" href="?currentPage=${i}">
-            ${i}
-          </a>
+        <c:forEach var="i" begin="${startPage}" end="${endPage}">
+          <c:choose>
+            <c:when test="${currentPage == i}">
+              <span class="page-btn active">${i}</span>
+            </c:when>
+            <c:otherwise>
+              <a class="page-btn" href="?currentPage=${i}">${i}</a>
+            </c:otherwise>
+          </c:choose>
         </c:forEach>
 
-        <c:if test="${currentPage < lastPage}">
-          <a class="page-btn" href="?currentPage=${currentPage + 1}">&raquo;</a>
+        <c:if test="${lastPage != endPage}">
+          <a class="page-btn" href="?currentPage=${startPage+10}">다음</a>
         </c:if>
+        <a class="page-btn" href="?currentPage=${lastPage}">끝</a>
       </div>
     </div>
   </div>
@@ -267,7 +268,7 @@ function initToggle() {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: params.toString(),
-        cache: "no-store" // 🚫 캐시 방지
+        cache: "no-store"
       });
 
       const result = await response.json();
@@ -283,7 +284,7 @@ function initToggle() {
   });
 }
 
-// ✅ 삭제 기능 (파라미터 누적 방지 + 안전 인코딩)
+// 삭제 기능
 function initDelete() {
   document.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", async () => {

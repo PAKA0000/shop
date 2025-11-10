@@ -5,7 +5,7 @@ public class Customer {
     private String customerId;
     private String customerPw;
     private String customerName;
-    private int customerPhone;
+    private String customerPhone; // ⚠ int -> String 변경
     private int point;
     private String createdate;
 
@@ -41,11 +41,11 @@ public class Customer {
         this.customerName = customerName;
     }
 
-    public int getCustomerPhone() {
+    public String getCustomerPhone() {   // ⚠ int -> String
         return customerPhone;
     }
 
-    public void setCustomerPhone(int customerPhone) {
+    public void setCustomerPhone(String customerPhone) { // ⚠ int -> String
         this.customerPhone = customerPhone;
     }
 
