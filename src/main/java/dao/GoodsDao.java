@@ -199,5 +199,28 @@ public class GoodsDao {
 
 	    return list;
 	}
+	public int selectGoodsCount() throws Exception {
+	    int count = 0;
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+	    ResultSet rs = null;
+	    
+	    String sql = "SELECT COUNT(*) FROM goods WHERE soldout IS NULL";
+	    
+	    try {
+	        conn = DBConnection.getConn();
+	        stmt = conn.prepareStatement(sql);
+	        rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            count = rs.getInt(1);
+	        }
+	    } finally {
+	        if (rs != null) try { rs.close(); } catch (SQLException e) {}
+	        if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
+	        if (conn != null) try { conn.close(); } catch (SQLException e) {}
+	    }
+	    return count;
+	}
+
 
 }

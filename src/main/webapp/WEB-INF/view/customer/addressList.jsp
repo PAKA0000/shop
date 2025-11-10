@@ -116,70 +116,66 @@ h1 {
 </head>
 
 <body>
-  <div class="container">
-    <h1>배송지 관리</h1>
+<div class="container">
+  <h1>배송지 관리</h1>
 
-    <!-- customer menu include -->
-    <c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
-    <hr>
+  <!-- 고객 메뉴 include -->
+  <c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
+  <hr>
 
-    <div class="menu">
-      <a href="${pageContext.request.contextPath}/customer/addAddress">＋ 새 배송지 추가</a>
-    </div>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>받는 분</th>
-          <th>주소</th>
-          <th>우편번호</th>
-          <th>상세주소</th>
-          <th>기본배송지</th>
-          <th>관리</th>
-        </tr>
-      </thead>
-      <tbody>
-        <c:choose>
-          <c:when test="${empty addressList}">
-            <tr><td colspan="6" class="no-data">등록된 배송지가 없습니다.</td></tr>
-          </c:when>
-          <c:otherwise>
-            <c:forEach var="a" items="${addressList}">
-              <tr>
-                <td>${a.receiverName}</td>
-                <td>${a.roadAddress} ${a.extraAddress}</td>
-                <td>${a.postcode}</td>
-                <td>${a.detailAddress}</td>
-                <td>
-                  <c:choose>
-                    <c:when test="${a.defaultAddress eq 'Y'}">
-                      ✅ 기본
-                    </c:when>
-                    <c:otherwise>
-                      <form method="post" action="${pageContext.request.contextPath}/customer/setDefaultAddress" style="display:inline;">
-                        <input type="hidden" name="addressNo" value="${a.addressNo}">
-                        <button type="submit" class="btn btn-gray">기본으로 설정</button>
-                      </form>
-                    </c:otherwise>
-                  </c:choose>
-                </td>
-                <td>
-                  <form method="post" action="${pageContext.request.contextPath}/customer/deleteAddress" style="display:inline;">
-                    <input type="hidden" name="addressNo" value="${a.addressNo}">
-                    <button type="submit" class="btn btn-gray">삭제</button>
-                  </form>
-                </td>
-              </tr>
-            </c:forEach>
-          </c:otherwise>
-        </c:choose>
-      </tbody>
-    </table>
-
-    <div class="note">
-      배송지는 최대 <strong>5개</strong>까지 등록할 수 있으며,<br>
-      6번째 입력 시 가장 오래된 배송지가 자동으로 삭제됩니다.
-    </div>
+  <div class="menu">
+    <a href="${pageContext.request.contextPath}/customer/addAddress">＋ 새 배송지 추가</a>
   </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>주소</th>
+        <th>우편번호</th>
+        <th>상세주소</th>
+        <th>기본배송지</th>
+        <th>관리</th>
+      </tr>
+    </thead>
+    <tbody>
+      <c:choose>
+        <c:when test="${empty addressList}">
+          <tr><td colspan="5" class="no-data">등록된 배송지가 없습니다.</td></tr>
+        </c:when>
+        <c:otherwise>
+          <c:forEach var="a" items="${addressList}">
+            <tr>
+              <td>${a.roadAddress} ${a.extraAddress}</td>
+              <td>${a.postcode}</td>
+              <td>${a.detailAddress}</td>
+              <td>
+                <c:choose>
+                  <c:when test="${a.defaultAddress eq 'Y'}">✅ 기본</c:when>
+                  <c:otherwise>
+                    <form method="post" action="${pageContext.request.contextPath}/customer/setDefaultAddress" style="display:inline;">
+                      <input type="hidden" name="addressNo" value="${a.addressNo}">
+                      <button type="submit" class="btn btn-gray">기본으로 설정</button>
+                    </form>
+                  </c:otherwise>
+                </c:choose>
+              </td>
+              <td>
+                <form method="post" action="${pageContext.request.contextPath}/customer/deleteAddress" style="display:inline;">
+                  <input type="hidden" name="addressNo" value="${a.addressNo}">
+                  <button type="submit" class="btn btn-gray">삭제</button>
+                </form>
+              </td>
+            </tr>
+          </c:forEach>
+        </c:otherwise>
+      </c:choose>
+    </tbody>
+  </table>
+
+  <div class="note">
+    배송지는 최대 <strong>5개</strong>까지 등록할 수 있으며,<br>
+    6번째 입력 시 가장 오래된 배송지가 자동으로 삭제됩니다.
+  </div>
+</div>
 </body>
 </html>
