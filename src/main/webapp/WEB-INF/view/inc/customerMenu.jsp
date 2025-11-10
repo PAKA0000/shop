@@ -68,5 +68,16 @@
 
 <div class="emp-navbar">
 <div>
+	<a href="${pageContext.request.contextPath}/customer/customerIndex">[상품목록]</a>
+	<!-- 상품목록 / 상세보기 / 주문 / -->
+	<a href="${pageContext.request.contextPath}/customer/customerInfo">[개인정보]</a>
+	<!-- 개인정보열람
+	/ 비밀번호 수정->트렌잭션: customer 비밀번호 수정 + pw_history에 비밀번호입력 
+	/폰번호수정
+	/회원탈퇴() - 트랜잭션 : outId 입력 + customer 삭제 
+	-->
 	<a href="${pageContext.request.contextPath}/customer/addressList">[배송지관리]</a>
+	<!-- 배송지목록 / 배송지 추가(최대5개만유지될수있게) 6번쨰->제일오래된주소 삭제되고 새로 추가됨  / 삭제 -->
+	<a href="${pageContext.request.contextPath}/customer/cartList">[장바구니]</a>
+	
 </div>

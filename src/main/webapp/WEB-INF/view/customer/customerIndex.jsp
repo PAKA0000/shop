@@ -20,5 +20,38 @@
 		(point : ${loginCustomer.point})
 		<a href="${pageContext.request.contextPath}/customer/customerLogout">로그아웃</a>
 	</div>
+	
+	<h2>베스트 상품목록</h2>
+	<!-- 베스트:가장많이 주문완료된 상품 5개  -->
+	<div>
+		베스트상품(5개)
+	</div>
+	<h2>상품목록</h2>
+
+	<div>
+		<table border="1">
+			<tr>
+			<!-- c:forEach varStatus : index(0~),count(1~), first(T/F), last(T/F) -->
+			<c:forEach var="m" items="${goodsList}" varStatus="state">
+				
+					<td>
+						<!-- image -->
+						<div>
+							<img src="${pageContext.request.contextPath}/upload/${m.filename}">
+						</div>
+						<!-- 이름,가격 -->
+						<div>
+							${m.goodsName}<br>
+							$(m.goodsPrice)
+							<br>${state.last}
+						</div>
+					</td>
+					<c:if test="${state.count % 5 ==0}">
+						</tr><tr>
+					</c:if>
+			</c:forEach>
+			</tr>
+		</table>
+	</div>
 </body>
 </html>

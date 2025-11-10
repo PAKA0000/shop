@@ -13,6 +13,59 @@ import dto.Goods;
 import dto.GoodsImg;
 
 public class GoodsDao {
+	public List<Map<String, Object>> selectBestList(int beginRow, int rowPerPage) throws Exception {
+		 List<Map<String, Object>> list = new ArrayList<>();
+		    Connection conn = null;
+		    PreparedStatement stmt = null;
+		    ResultSet rs = null;
+
+		    String sql = """
+		        SELECT 
+		            g.goods_code AS goodsCode,
+		            g.goods_name AS goodsName,
+		            g.goods_price AS goodsPrice,
+		            g.point_rate AS pointRate,
+		            g.soldout AS soldout,
+		            g.createdate AS createdate,
+		            gi.filename AS filename
+		        FROM goods g
+		        LEFT JOIN goods_img gi
+		            ON g.goods_code = gi.goods_code
+		            where g.soldout is null
+		        ORDER BY g.goods_code DESC
+		        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+		    """;
+
+		    try {
+		        conn = DBConnection.getConn();
+		        stmt = conn.prepareStatement(sql);
+		        stmt.setInt(1, beginRow);
+		        stmt.setInt(2, rowPerPage);
+
+		        rs = stmt.executeQuery();
+		        while (rs.next()) {
+		            Map<String, Object> m = new HashMap<>();
+		            m.put("goodsCode", rs.getInt("goodsCode"));
+		            m.put("goodsName", rs.getString("goodsName"));
+		            m.put("goodsPrice", rs.getDouble("goodsPrice"));
+		            m.put("pointRate", rs.getDouble("pointRate"));
+		            m.put("soldout", rs.getString("soldout"));
+		            m.put("createdate", rs.getString("createdate"));
+		            m.put("filename", rs.getString("filename"));
+		            list.add(m);
+		        }
+
+		        System.out.println("[GoodsDao] 상품 개수: " + list.size());
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (rs != null) try { rs.close(); } catch (SQLException e) {}
+		        if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
+		        if (conn != null) try { conn.close(); } catch (SQLException e) {}
+		    }
+
+		    return list;
+		}
 	// 상품등록 + 이미지 등록
 	// 반환값은 실패시 false
 	public boolean insertGoodsAndImg(Goods goods, GoodsImg img) {
@@ -111,6 +164,7 @@ public class GoodsDao {
 	        FROM goods g
 	        LEFT JOIN goods_img gi
 	            ON g.goods_code = gi.goods_code
+	            where g.soldout is null
 	        ORDER BY g.goods_code DESC
 	        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
 	    """;
@@ -126,15 +180,11 @@ public class GoodsDao {
 	            Map<String, Object> m = new HashMap<>();
 	            m.put("goodsCode", rs.getInt("goodsCode"));
 	            m.put("goodsName", rs.getString("goodsName"));
-
-	            
 	            m.put("goodsPrice", rs.getDouble("goodsPrice"));
-
 	            m.put("pointRate", rs.getDouble("pointRate"));
 	            m.put("soldout", rs.getString("soldout"));
 	            m.put("createdate", rs.getString("createdate"));
 	            m.put("filename", rs.getString("filename"));
-
 	            list.add(m);
 	        }
 
