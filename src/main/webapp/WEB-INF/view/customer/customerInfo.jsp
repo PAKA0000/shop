@@ -18,9 +18,9 @@ form button:hover { background:#02b150; }
 <body>
 <div class="container">
     <h2>회원 정보 수정</h2>
-    <form method="post">
+    <form method="post" action="${pageContext.request.contextPath}/customer/customerInfo">
         <label>아이디</label>
-        <input type="text" value="${customer.customerId}" readonly>
+        <input type="text" name="id" value="${customer.customerId}" readonly>
 
         <label>비밀번호</label>
         <input type="password" name="pw" value="${customer.customerPw}" required>

@@ -8,68 +8,64 @@ public class Customer {
     private String customerPhone; // ⚠ int -> String 변경
     private int point;
     private String createdate;
-
-    public int getCustomerCode() {
-        return customerCode;
-    }
-
-    public void setCustomerCode(int customerCode) {
-        this.customerCode = customerCode;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
-
-    public String getCustomerPw() {
-        return customerPw;
-    }
-
-    public void setCustomerPw(String customerPw) {
-        this.customerPw = customerPw;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getCustomerPhone() {   // ⚠ int -> String
-        return customerPhone;
-    }
-
-    public void setCustomerPhone(String customerPhone) { // ⚠ int -> String
-        this.customerPhone = customerPhone;
-    }
-
-    public int getPoint() {   
-        return point;
-    }
-
-    public void setPoint(int point) {
-        this.point = point;
-    }
-
-    public String getCreatedate() {
-        return createdate;
-    }
-
-    public void setCreatedate(String createdate) {
-        this.createdate = createdate;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer [customerCode=" + customerCode + ", customerId=" + customerId 
-                + ", customerPw=" + customerPw + ", customerName=" + customerName 
-                + ", customerPhone=" + customerPhone + ", point=" + point 
-                + ", createdate=" + createdate + "]";
-    }
+    private String gender;
+	public int getCustomerCode() {
+		return customerCode;
+	}
+	public void setCustomerCode(int customerCode) {
+		this.customerCode = customerCode;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	public String getCustomerPw() {
+		return customerPw;
+	}
+	public void setCustomerPw(String customerPw) {
+		this.customerPw = customerPw;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+	public String getCustomerPhone() {
+		return customerPhone;
+	}
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
+	}
+	public int getPoint() {
+		return point;
+	}
+	public void setPoint(int point) {
+		this.point = point;
+	}
+	public String getCreatedate() {
+		return createdate;
+	}
+	public void setCreatedate(String createdate) {
+		this.createdate = createdate;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	@Override
+	public String toString() {
+		return "Customer [customerCode=" + customerCode + ", customerId=" + customerId + ", customerPw=" + customerPw
+				+ ", customerName=" + customerName + ", customerPhone=" + customerPhone + ", point=" + point
+				+ ", createdate=" + createdate + ", gender=" + gender + ", getCustomerCode()=" + getCustomerCode()
+				+ ", getCustomerId()=" + getCustomerId() + ", getCustomerPw()=" + getCustomerPw()
+				+ ", getCustomerName()=" + getCustomerName() + ", getCustomerPhone()=" + getCustomerPhone()
+				+ ", getPoint()=" + getPoint() + ", getCreatedate()=" + getCreatedate() + ", getGender()=" + getGender()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
+				+ "]";
+	}
 }

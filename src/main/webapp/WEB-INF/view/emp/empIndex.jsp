@@ -77,6 +77,7 @@
         <a href="${pageContext.request.contextPath}/emp/OutidList">탈퇴회원관리</a>
         <a href="${pageContext.request.contextPath}/emp/goodsList">상품관리</a>
           <a href="${pageContext.request.contextPath}/emp/noticeList">공지관리</a>
+           <a href="${pageContext.request.contextPath}/emp/stats">통계자료</a> <!-- AJax -->
         
     </nav>
 </header>

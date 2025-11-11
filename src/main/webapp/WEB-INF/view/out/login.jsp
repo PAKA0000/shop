@@ -159,5 +159,6 @@ button:hover {
       <label><input type="radio" name="customerOrEmpSel" value="Emp"> 사원</label>
     </div>
   </form>
-  <a href="${pageContext.request.contextPath}/out/addCustomer" class="signup-link">회원가입</a>
+ <a href="${pageContext.request.contextPath}/customer/addCustomer" class="signup-link">회원가입</a>
+
 </div>

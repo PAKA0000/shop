@@ -246,63 +246,24 @@ public class CustomerDao extends DBConnection {
         }
         return 0;
     }
-
-    public int updateCustomerWithPwHistory(Customer c, String oldPw) throws SQLException {
-        String sqlUpdate = "UPDATE customer SET customer_pw = ?, customer_name = ?, customer_phone = ? WHERE customer_id = ?";
-        String sqlHistory = "INSERT INTO pw_history(customer_id, pw, change_date) VALUES(?, ?, SYSDATE)";
-        int row = 0;
-
-        Connection conn = null;
-        PreparedStatement psUpdate = null;
-        PreparedStatement psHistory = null;
-
-        try {
-            conn = getConn();
-            conn.setAutoCommit(false);
-
-            // 1. pw_history에 기존 비밀번호 저장
-            psHistory = conn.prepareStatement(sqlHistory);
-            psHistory.setString(1, c.getCustomerId());
-            psHistory.setString(2, oldPw); // 기존 비밀번호
-            psHistory.executeUpdate();
-
-            // 2. customer 테이블 업데이트
-            psUpdate = conn.prepareStatement(sqlUpdate);
-            psUpdate.setString(1, c.getCustomerPw());
-            psUpdate.setString(2, c.getCustomerName());
-            psUpdate.setString(3, c.getCustomerPhone());
-            psUpdate.setString(4, c.getCustomerId());
-            row = psUpdate.executeUpdate();
-
-            conn.commit();
-
-        } catch (SQLException e) {
-            if (conn != null) conn.rollback();
-            throw e;
-        } finally {
-            if (psHistory != null) psHistory.close();
-            if (psUpdate != null) psUpdate.close();
-            if (conn != null) conn.close();
-        }
-
-        return row;
-    }
-
+ //  updateCustomerWithHistory 그대로 사용
     public int updateCustomerWithHistory(Customer c) throws SQLException {
         String sqlUpdate = "UPDATE customer SET customer_pw = ?, customer_name = ?, customer_phone = ? WHERE customer_id = ?";
-        String sqlHistory = "INSERT INTO pw_history(customer_id, pw, createdate) VALUES (?, ?, SYSDATE)";
+        String sqlHistory = "INSERT INTO pw_history(customer_code, pw, createdate) VALUES (?, ?, SYSDATE)";
         
         try (Connection conn = getConn()) {
             conn.setAutoCommit(false);
             try (PreparedStatement stmtUpdate = conn.prepareStatement(sqlUpdate);
                  PreparedStatement stmtHistory = conn.prepareStatement(sqlHistory)) {
 
+                // customer 업데이트
                 stmtUpdate.setString(1, c.getCustomerPw());
                 stmtUpdate.setString(2, c.getCustomerName());
                 stmtUpdate.setString(3, c.getCustomerPhone());
                 stmtUpdate.setString(4, c.getCustomerId());
                 int row = stmtUpdate.executeUpdate();
 
+                // pw_history 기록
                 stmtHistory.setString(1, c.getCustomerId());
                 stmtHistory.setString(2, c.getCustomerPw());
                 stmtHistory.executeUpdate();
@@ -316,4 +277,5 @@ public class CustomerDao extends DBConnection {
         }
     }
 
-}
+    }
+

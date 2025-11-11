@@ -243,7 +243,7 @@ $(function(){
   <div class="carousel-track">
     <c:forEach var="b" items="${bestGoodsList}">
       <div class="carousel-item">
-        <a href="${pageContext.request.contextPath}/customer/goodsDetail?goodsCode=${b.goodsCode}">
+        <a href="${pageContext.request.contextPath}/customer/goodsOne?goodsCode=${b.goodsCode}">
           <img src="${pageContext.request.contextPath}/upload/${b.filename}" alt="${b.goodsName}">
         </a>
         <div class="name">${b.goodsName}</div>
@@ -266,7 +266,8 @@ $(function(){
         <tr>
           <c:forEach var="m" items="${goodsList}" varStatus="state">
             <td>
-              <a href="${pageContext.request.contextPath}/customer/goodsDetail?goodsCode=${m.goodsCode}">
+              <a href="${pageContext.request.contextPath}/customer/goodsOne?goodsCode=${m.goodsCode}">
+
                 <img src="${pageContext.request.contextPath}/upload/${m.filename}" alt="${m.goodsName}">
               </a>
               <div>${m.goodsName}</div>
