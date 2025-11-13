@@ -1,83 +1,54 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <style>
-    /* 네비게이션 전체 바 */
-    .emp-navbar {
-        background-color: #03c75a;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 40px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    /* 로고/타이틀 */
-    .emp-navbar .logo {
-        color: white;
-        font-weight: 700;
-        font-size: 20px;
-        text-decoration: none;
-        letter-spacing: 0.5px;
-    }
-
-    /* 메뉴 영역 */
-    .emp-navbar .nav-links {
-        display: flex;
-        gap: 20px;
-        align-items: center;
-    }
-
-    .emp-navbar .nav-links a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 15px;
-        padding: 6px 10px;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-    }
-
-    .emp-navbar .nav-links a:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* 오른쪽 사용자 정보 */
-    .emp-navbar .user-info {
-        color: white;
-        font-size: 14px;
-    }
-
-    .emp-navbar .logout-btn {
-        margin-left: 10px;
-        background: white;
-        color: #03c75a;
-        border: none;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .emp-navbar .logout-btn:hover {
-        background-color: #f1f1f1;
-        transform: translateY(-1px);
-    }
+.emp-navbar {
+  background-color: #03c75a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 60px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: "Noto Sans KR", sans-serif;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.emp-navbar .logo { color: #fff; font-weight: 700; font-size: 20px; text-decoration: none; }
+.emp-navbar .logo:hover { opacity: 0.85; }
+.emp-navbar .nav-links { display: flex; justify-content: center; flex: 1; gap: 36px; text-align: center; }
+.emp-navbar .nav-links a { color: #fff; text-decoration: none; font-weight: 500; font-size: 15px; padding: 8px 14px; border-radius: 8px; min-width: 80px; text-align: center; }
+.emp-navbar .nav-links a:hover { background-color: rgba(255,255,255,0.18); transform: translateY(-1px); }
+.emp-navbar .user-info { display: flex; align-items: center; gap: 12px; color: #fff; font-size: 14px; flex-shrink: 0; }
+.emp-navbar .logout-btn { background-color: #fff; color: #03c75a; border: none; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; }
+.emp-navbar .logout-btn:hover { background-color: #f6f6f6; transform: translateY(-1px); }
+@media (max-width: 1024px) {
+  .emp-navbar { flex-direction: column; align-items: center; padding: 16px 24px; gap: 14px; }
+  .emp-navbar .nav-links { flex-wrap: wrap; gap: 14px; }
+  .emp-navbar .nav-links a { font-size: 14px; padding: 6px 10px; min-width: 70px; }
+  .emp-navbar .logout-btn { padding: 5px 12px; }
+}
 </style>
 
 <div class="emp-navbar">
-<div>
-	<a href="${pageContext.request.contextPath}/customer/customerIndex">[상품목록]</a>
-	<!-- 상품목록 / 상세보기 / 주문 / -->
-	<a href="${pageContext.request.contextPath}/customer/customerInfo">[개인정보]</a>
-	<!-- 개인정보열람
-	/ 비밀번호 수정->트렌잭션: customer 비밀번호 수정 + pw_history에 비밀번호입력 
-	/폰번호수정
-	/회원탈퇴() - 트랜잭션 : outId 입력 + customer 삭제 
-	-->
-	<a href="${pageContext.request.contextPath}/customer/addressList">[배송지관리]</a>
-	<!-- 배송지목록 / 배송지 추가(최대5개만유지될수있게) 6번쨰->제일오래된주소 삭제되고 새로 추가됨  / 삭제 -->
-	<a href="${pageContext.request.contextPath}/customer/cartList">[장바구니]</a>
-	
+  <!-- 왼쪽: 로고 -->
+  <a href="${pageContext.request.contextPath}/customer/customerIndex.jsp" class="logo">
+    🛍 GDJ95 SHOP
+  </a>
+
+  <!-- 가운데: 메뉴 -->
+  <div class="nav-links">
+    <a href="${pageContext.request.contextPath}/customer/customerIndex.jsp">상품목록</a>
+    <a href="${pageContext.request.contextPath}/customer/customerInfo.jsp">개인정보</a>
+    <a href="${pageContext.request.contextPath}/customer/addressList.jsp">배송지관리</a>
+    <a href="${pageContext.request.contextPath}/customer/cartList.jsp">장바구니</a>
+  </div>
+
+  <!-- 오른쪽: 사용자 정보 -->
+  <div class="user-info">
+    <span>${loginCustomer.customerName}님</span>
+    <span style="opacity: 0.85;">(point: ${loginCustomer.point})</span>
+    <form action="${pageContext.request.contextPath}/customer/customerLogout" method="post" style="margin:0;">
+      <button type="submit" class="logout-btn">로그아웃</button>
+    </form>
+  </div>
 </div>

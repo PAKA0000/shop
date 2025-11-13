@@ -5,8 +5,8 @@
 <title>GDJ95 SHOP - 상품 상세</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<meta charset="UTF-8">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- ✅ 스타일 시작 -->
 <style>
@@ -194,16 +194,16 @@ button {
   <div class="goods-container">
     <img src="${pageContext.request.contextPath}/upload/${goods.filename}" alt="${goods.goodsName}">
     <div class="goods-info">
-      <form>
+      <form  method="get">
         <table>
           <tr><td>상품명</td><td>${goods.goodsName}</td></tr>
           <tr><td>가격</td> <td> <fmt:formatNumber value="${goods.goodsPrice}" type="number"/>원</td></tr>
           <tr><td>포인트율</td><td>${goods.pointRate}%</td></tr>
           <tr><td>판매상태</td><td>${goods.soldout}</td></tr>
           <tr>
-            <td>수량</td>
+            <td>수량</td>		
             <td>
-              <select>
+              <select name = "cartQuentily">
                 <c:forEach var="n" begin="1" end="10">
                   <option value="${n}">${n}</option>
                 </c:forEach>

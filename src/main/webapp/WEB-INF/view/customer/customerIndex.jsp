@@ -2,13 +2,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>GDJ95 SHOP - 메인</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
+/* ==============================
+   기본 세팅
+============================== */
 body {
   margin: 0;
   padding: 0;
@@ -17,50 +20,104 @@ body {
   color: #333;
 }
 
-/* 상단 영역 */
+/* ==============================
+   상단 헤더
+============================== */
 header {
-  background-color: #2db400;
+  background-color: #03c75a;
   color: white;
   text-align: center;
-  padding: 20px 0;
+  padding: 18px 0;
   font-size: 24px;
   font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
-/* 상단 메뉴 */
+/* ==============================
+   네비게이션 + 사용자정보
+============================== */
 nav {
   background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 12px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 0 40px;
 }
 
-/* 로그인 정보 */
-.user-info {
-  text-align: right;
-  padding: 20px 40px;
-  font-size: 15px;
-  color: #444;
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
 }
-.user-info a {
-  color: #2db400;
+
+/* 왼쪽: 로고 */
+.navbar .logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: #03c75a;
   text-decoration: none;
-  font-weight: 600;
-  margin-left: 10px;
+  transition: opacity 0.2s ease;
 }
-.user-info a:hover {
-  text-decoration: underline;
+.navbar .logo:hover {
+  opacity: 0.8;
 }
 
-/* 섹션 제목 */
+/* 가운데: 메뉴 */
+.navbar .nav-links {
+  display: flex;
+  gap: 26px;
+}
+.navbar .nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+.navbar .nav-links a:hover {
+  color: #03c75a;
+  transform: translateY(-1px);
+}
+
+/* 오른쪽: 사용자 정보 */
+.navbar .user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+.user-info .logout-btn {
+  background-color: #03c75a;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.user-info .logout-btn:hover {
+  background-color: #02b350;
+  transform: translateY(-1px);
+}
+
+/* ==============================
+   섹션 제목
+============================== */
 h2 {
-  margin: 30px 0 15px 40px;
+  margin: 40px 0 15px 60px;
   font-size: 22px;
   color: #222;
-  border-left: 5px solid #2db400;
+  border-left: 5px solid #03c75a;
   padding-left: 10px;
 }
 
-/* 베스트 상품 캐러셀 */
+/* ==============================
+   캐러셀
+============================== */
 .carousel {
   width: 90%;
   max-width: 900px;
@@ -76,7 +133,7 @@ h2 {
   transition: transform 0.5s ease;
 }
 .carousel-item {
-  min-width: 50%; /* 한 화면에 2개씩 */
+  min-width: 50%;
   box-sizing: border-box;
   padding: 20px;
   text-align: center;
@@ -93,11 +150,11 @@ h2 {
   margin-bottom: 5px;
 }
 .carousel-item .price {
-  color: #2db400;
+  color: #03c75a;
   font-weight: 700;
 }
 
-/* 좌우 버튼 */
+/* 캐러셀 버튼 */
 .carousel-btn {
   position: absolute;
   top: 45%;
@@ -118,7 +175,9 @@ h2 {
 .prev-btn { left: 10px; }
 .next-btn { right: 10px; }
 
-/* 상품 목록 테이블 */
+/* ==============================
+   상품 목록
+============================== */
 table {
   width: 90%;
   margin: 0 auto 20px auto;
@@ -147,17 +206,20 @@ td img {
 }
 td .price {
   font-size: 14px;
-  color: #2db400;
+  color: #03c75a;
   font-weight: 700;
   margin-top: 4px;
 }
 
-/* 페이징 */
+/* ==============================
+   페이징
+============================== */
 .pagination {
   text-align: center;
   margin: 40px 0;
 }
-.pagination a, .pagination span {
+.pagination a,
+.pagination span {
   display: inline-block;
   margin: 0 5px;
   padding: 8px 12px;
@@ -169,19 +231,28 @@ td .price {
   transition: all 0.2s;
 }
 .pagination a:hover {
-  background-color: #2db400;
+  background-color: #03c75a;
   color: #fff;
 }
 .pagination .active {
-  background-color: #2db400;
+  background-color: #03c75a;
   color: #fff;
   font-weight: bold;
 }
 
-/* 반응형 */
+/* ==============================
+   반응형
+============================== */
 @media (max-width: 768px) {
-  .carousel-item {
-    min-width: 100%;
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  .navbar .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
   }
   td img {
     width: 120px;
@@ -211,12 +282,8 @@ $(function(){
   $(".next-btn").click(nextSlide);
   $(".prev-btn").click(prevSlide);
 
-  function startAutoSlide(){
-    autoSlide = setInterval(nextSlide, 3000);
-  }
-  function stopAutoSlide(){
-    clearInterval(autoSlide);
-  }
+  function startAutoSlide(){ autoSlide = setInterval(nextSlide, 3000); }
+  function stopAutoSlide(){ clearInterval(autoSlide); }
 
   $(".carousel").hover(stopAutoSlide, startAutoSlide);
   startAutoSlide();
@@ -229,14 +296,28 @@ $(function(){
 <header>GDJ95 SHOP</header>
 
 <nav>
-  <c:import url="/WEB-INF/view/inc/customerMenu.jsp"></c:import>
-</nav>
+  <div class="navbar">
+    <!-- 로고 -->
+    <a href="${pageContext.request.contextPath}/customer/customerIndex" class="logo">🛍 GDJ95 SHOP</a>
 
-<div class="user-info">
-  ${loginCustomer.customerName}님 반갑습니다.
-  (point: ${loginCustomer.point})
-  <a href="${pageContext.request.contextPath}/customer/customerLogout">로그아웃</a>
-</div>
+    <!-- 메뉴 -->
+    <div class="nav-links">
+      <a href="${pageContext.request.contextPath}/customer/customerIndex">상품목록</a>
+      <a href="${pageContext.request.contextPath}/customer/customerInfo">개인정보</a>
+      <a href="${pageContext.request.contextPath}/customer/addressList">배송지관리</a>
+      <a href="${pageContext.request.contextPath}/customer/cartList">장바구니</a>
+    </div>
+
+    <!-- 사용자 정보 -->
+    <div class="user-info">
+      <span>${loginCustomer.customerName}님</span>
+      <span style="opacity:0.8;">(point: ${loginCustomer.point})</span>
+      <form action="${pageContext.request.contextPath}/customer/customerLogout" method="post" style="margin:0;">
+        <button type="submit" class="logout-btn">로그아웃</button>
+      </form>
+    </div>
+  </div>
+</nav>
 
 <h2>베스트 상품</h2>
 <div class="carousel">
@@ -267,7 +348,6 @@ $(function(){
           <c:forEach var="m" items="${goodsList}" varStatus="state">
             <td>
               <a href="${pageContext.request.contextPath}/customer/goodsOne?goodsCode=${m.goodsCode}">
-
                 <img src="${pageContext.request.contextPath}/upload/${m.filename}" alt="${m.goodsName}">
               </a>
               <div>${m.goodsName}</div>
@@ -283,7 +363,7 @@ $(function(){
   </c:choose>
 </div>
 
-<!-- ✅ 페이징 -->
+<!-- 페이징 -->
 <div class="pagination">
   <c:if test="${startPage > 1}">
     <a href="${pageContext.request.contextPath}/customer/customerIndex?currentPage=${startPage - 1}">◀ 이전</a>
@@ -306,4 +386,4 @@ $(function(){
 </div>
 
 </body>
-</html>
+<

@@ -77,7 +77,10 @@
         <a href="${pageContext.request.contextPath}/emp/addGoods">상품 등록</a>
          <a href="${pageContext.request.contextPath}/emp/ordersList">주문 내역</a>
         <a href="${pageContext.request.contextPath}/emp/customerList">고객 관리</a>
+          <a href="${pageContext.request.contextPath}/emp/questionList">주문질문관리</a>
+           <a href="${pageContext.request.contextPath}/emp/reviewList">상품리뷰관리</a>
         <a href="${pageContext.request.contextPath}/emp/noticeList">공지관리</a>
+        
     </div>
 
     <!-- 우측 사용자 정보 -->
